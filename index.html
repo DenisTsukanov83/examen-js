@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/script.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>My weather</h1>
+            <div class="header-search">
+                <input type="text" value="">
+            </div>
+        </header>
+        <div class="tabs">
+            <div class="tab btn-today tabs-active">Today</div>
+            <div class="tab btn-forecast">5-day forecast</div>
+        </div>
+        <main class="main">
+            <section class="today">
+                <div class="item today-current">
+                    <div class="today-current-header">
+                        <div class="title">Current weather</div>
+                        <div class="title">30.06.2018</div>
+                    </div>
+                    <div class="today-current-main">
+                        <div class="today-current-weather">
+                            <div>
+                                <img src="img/sun.svg" alt="sun.svg">
+                            </div>
+                            <div>
+                                Sunny
+                            </div>
+                        </div>
+                        <div class="today-current-temp">
+                            <div>
+                                29&deg;c
+                            </div>
+                            <div>
+                                Real Feel 30&deg;
+                            </div>
+                        </div>
+                        <div class="today-current-sunrise">
+                            <div>
+                                <div>Sunrise</div>
+                                <div class="sunrise">7:04 am</div>
+                            </div>
+                            <div>
+                                <div>Sunset:</div>
+                                <div class="sunset">5:11 pm</div>
+                            </div>
+                            <div>
+                                <div>Duration:</div>
+                                <div class="duration">10:07 hr</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item today-hourly">
+                    <div class="title">Hourly</div>
+                    <div class="today-hourly-main">
+                        <div>Today</div>
+                        <div class="col-1">7pm</div>
+                        <div class="col-2">8pm</div>
+                        <div class="col-3">9pm</div>
+                        <div class="col-4">10pm</div>
+                        <div class="col-5">11pm</div>
+                        <!-- <div>12am</div> -->
+                        <div></div>
+                        <div class="today-hourly-icons">
+                            <img class="col-1" src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div class="today-hourly-icons">
+                            <img class="col-2" src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div class="today-hourly-icons">
+                            <img class="col-3" src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div class="today-hourly-icons">
+                            <img class="col-4" src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div class="today-hourly-icons">
+                            <img class="col-5" src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <!-- <div class="today-hourly-icons">
+                            <img src="img/moon.svg" alt="moon.svg">
+                        </div> -->
+                        <div class="table-name">Forecast</div>
+                        <div class="col-1">Sunny</div>
+                        <div class="col-2">Sunny</div>
+                        <div class="col-3">Clear</div>
+                        <div class="col-4">Clear</div>
+                        <div class="col-5">Clear</div>
+                        <!-- <div>Clear</div> -->
+                        <div class="table-name">Temp (&deg;C)</div>
+                        <div class="col-1">29&deg;</div>
+                        <div class="col-2">28&deg;</div>
+                        <div class="col-3">28&deg;</div>
+                        <div class="col-4">27&deg;</div>
+                        <div class="col-5">27&deg;</div>
+                        <!-- <div>27&deg;</div> -->
+                        <div class="table-name">RealFeel</div>
+                        <div class="col-1">28&deg;</div>
+                        <div class="col-2">27&deg;</div>
+                        <div class="col-3">28&deg;</div>
+                        <div class="col-4">27&deg;</div>
+                        <div class="col-5">27&deg;</div>
+                        <!-- <div>26&deg;</div> -->
+                        <div class="table-name">Wind (km/h)</div>
+                        <div class="col-1 to-upper-case">11 ese</div>
+                        <div class="col-2 to-upper-case">9 ese</div>
+                        <div class="col-3 to-upper-case">6 se</div>
+                        <div class="col-4 to-upper-case">6 ese</div>
+                        <div class="col-5 to-upper-case">6 ese</div>
+                        <!-- <div class="to-upper-case">7 se</div> -->
+                    </div>
+                </div>
+                <div class="item today-places">
+                    <div class="title">Nearby places</div>
+                    <div class="today-places-main">
+                        <div class="today-places-item">
+                            <div>
+                                Baladzhary
+                            </div>
+                            <div>
+                                <img src="img/sun.svg" alt="sun.svg">
+                            </div>
+                            <div>
+                                36&deg;c
+                            </div>
+                        </div>
+                        <div class="today-places-item">
+                            <div>
+                                Badamdar
+                            </div>
+                            <div>
+                                <img src="img/sun.svg" alt="sun.svg">
+                            </div>
+                            <div>
+                                36&deg;c
+                            </div>
+                        </div>
+                        <div class="today-places-item">
+                            <div>
+                                Bailov
+                            </div>
+                            <div>
+                                <img src="img/sun.svg" alt="sun.svg">
+                            </div>
+                            <div>
+                                29&deg;c
+                            </div>
+                        </div>
+                        <div class="today-places-item">
+                            <div>
+                                Cherni Gorod
+                            </div>
+                            <div>
+                                <img src="img/sun.svg" alt="sun.svg">
+                            </div>
+                            <div>
+                                29&deg;c
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="forecast">
+                <div class="forecast-cards">
+                    <div class="forecast-cards-card">
+                        <div class="title">
+                            Tonight
+                        </div>
+                        <div>
+                            Jun 30
+                        </div>
+                        <div class="moon">
+                            <img src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div>
+                            25&deg;c
+                        </div>
+                        <div>
+                            Clear, Warm
+                        </div>
+                    </div>
+                    <div class="forecast-cards-card">
+                        <div class="title">
+                            Sun
+                        </div>
+                        <div>
+                            Jul 01
+                        </div>
+                        <div>
+                            <img src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div>
+                            40&deg;c
+                        </div>
+                        <div>
+                            Clear, Warm
+                        </div>
+                    </div>
+                    <div class="forecast-cards-card">
+                        <div class="title">
+                            Mon
+                        </div>
+                        <div>
+                            Jul 02
+                        </div>
+                        <div>
+                            <img src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div>
+                            35&deg;c
+                        </div>
+                        <div>
+                            Clear, Warm
+                        </div>
+                    </div>
+                    <div class="forecast-cards-card">
+                        <div class="title">
+                            Tue
+                        </div>
+                        <div>
+                            Jul 03
+                        </div>
+                        <div>
+                            <img src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div>
+                            38&deg;c
+                        </div>
+                        <div>
+                            Clear, Warm
+                        </div>
+                    </div>
+                    <div class="forecast-cards-card">
+                        <div class="title">
+                            Wed
+                        </div>
+                        <div>
+                            Jul 04
+                        </div>
+                        <div>
+                            <img src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div>
+                            36&deg;c
+                        </div>
+                        <div>
+                            Clear, Warm
+                        </div>
+                    </div>
+                </div>
+                <div class="item forecast-hourly">
+                    <div class="title">
+                        Hourly
+                    </div>
+                    <div class="today-hourly-main">
+                        <div>Sunday</div>
+                        <div>7pm</div>
+                        <div>8pm</div>
+                        <div>9pm</div>
+                        <div>10pm</div>
+                        <div>11pm</div>
+                        <div>12am</div>
+                        <div></div>
+                        <div class="today-hourly-icons">
+                            <img src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div class="today-hourly-icons">
+                            <img src="img/sun.svg" alt="sun.svg">
+                        </div>
+                        <div class="today-hourly-icons moon">
+                            <img src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div class="today-hourly-icons moon">
+                            <img src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div class="today-hourly-icons moon">
+                            <img src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div class="today-hourly-icons moon">
+                            <img src="img/moon.svg" alt="moon.svg">
+                        </div>
+                        <div class="table-name">Forecast</div>
+                        <div>Sunny</div>
+                        <div>Sunny</div>
+                        <div>Clear</div>
+                        <div>Clear</div>
+                        <div>Clear</div>
+                        <div>Clear</div>
+                        <div class="table-name">Temp (&deg;C)</div>
+                        <div>29&deg;</div>
+                        <div>28&deg;</div>
+                        <div>28&deg;</div>
+                        <div>27&deg;</div>
+                        <div>27&deg;</div>
+                        <div>27&deg;</div>
+                        <div class="table-name">RealFeel</div>
+                        <div>28&deg;</div>
+                        <div>27&deg;</div>
+                        <div>28&deg;</div>
+                        <div>27&deg;</div>
+                        <div>27&deg;</div>
+                        <div>26&deg;</div>
+                        <div class="table-name">Wind (km/h)</div>
+                        <div class="to-upper-case">11 ese</div>
+                        <div class="to-upper-case">9 ese</div>
+                        <div class="to-upper-case">6 se</div>
+                        <div class="to-upper-case">6 ese</div>
+                        <div class="to-upper-case">6 ese</div>
+                        <div class="to-upper-case">7 se</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+// main: style.less
+
+.today {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+}
+
+.today-current {
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &-main {
+        display: flex;
+        align-items: center;
+        padding: 0 81px;
+        margin-top: 18px;
+    }
+
+    &-weather {
+        width: 207px;
+
+        & div:first-child {
+            width: 60px;
+            height: 60px;
+        }
+
+        &>div:last-child {
+            margin-top: 4px;
+            font-size: 14pt;
+        }
+    }
+
+    &-temp {
+        width: 265px;
+
+        &>div:first-child {
+            font-size: 36pt;
+            text-transform: uppercase;
+        }
+
+        &>div:last-child {
+            font-size: 11pt;
+        }
+    }
+
+    &-sunrise {
+        margin-top: 10px;
+        width: 146px;
+        font-size: 13pt;
+
+        &>div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 9px;
+        }
+
+    }
+}
+
+.today-hourly {
+    &-main {
+        display: grid;
+        grid-template-columns: 139px 140px 140px 140px 140px 140px;
+        grid-template-rows: 42px 90px 44px 44px 44px 44px;
+        margin-top: 35px;
+        padding: 0 25px;
+
+        &>div:first-child {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    }
+
+    &-icons {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+.item.today-hourly {
+    padding: 24px 25px 11px 25px;
+    ;
+}
+
+.to-upper-case {
+    text-transform: uppercase;
+}
+
+.moon {
+    padding: 6px;
+}
+
+.today-places-main {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 32px;
+    padding: 0 6px 8px 6px;
+}
+
+.today-places-item {
+    background-color: rgb(237, 237, 237);
+    display: flex;
+    align-items: center;
+    padding: 7px 25px 8px 25px;
+    font-size: 14pt;
+}
+
+.today-places-item div:nth-child(1) {
+    width: 202px;
+}
+
+.today-places-item div:nth-child(2) {
+    width: 35px;
+    height: 35px;
+}
+
+.today-places-item div:nth-child(3) {
+    text-transform: uppercase;
+    margin-left: 33px;
+}

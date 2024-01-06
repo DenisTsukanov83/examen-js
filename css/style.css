@@ -1,0 +1,221 @@
+.today {
+  display: flex;
+  flex-direction: column;
+  gap: 23px;
+}
+.today-current-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.today-current-main {
+  display: flex;
+  align-items: center;
+  padding: 0 81px;
+  margin-top: 18px;
+}
+.today-current-weather {
+  width: 207px;
+}
+.today-current-weather div:first-child {
+  width: 60px;
+  height: 60px;
+}
+.today-current-weather > div:last-child {
+  margin-top: 4px;
+  font-size: 14pt;
+}
+.today-current-temp {
+  width: 265px;
+}
+.today-current-temp > div:first-child {
+  font-size: 36pt;
+  text-transform: uppercase;
+}
+.today-current-temp > div:last-child {
+  font-size: 11pt;
+}
+.today-current-sunrise {
+  margin-top: 10px;
+  width: 146px;
+  font-size: 13pt;
+}
+.today-current-sunrise > div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+.today-hourly-main {
+  display: grid;
+  grid-template-columns: 139px 140px 140px 140px 140px 140px;
+  grid-template-rows: 42px 90px 44px 44px 44px 44px;
+  margin-top: 35px;
+  padding: 0 25px;
+}
+.today-hourly-main > div:first-child {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.today-hourly-icons {
+  width: 60px;
+  height: 60px;
+}
+.item.today-hourly {
+  padding: 24px 25px 11px 25px;
+}
+.to-upper-case {
+  text-transform: uppercase;
+}
+.moon {
+  padding: 6px;
+}
+.today-places-main {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 32px;
+  padding: 0 6px 8px 6px;
+}
+.today-places-item {
+  background-color: #ededed;
+  display: flex;
+  align-items: center;
+  padding: 7px 25px 8px 25px;
+  font-size: 14pt;
+}
+.today-places-item div:nth-child(1) {
+  width: 202px;
+}
+.today-places-item div:nth-child(2) {
+  width: 35px;
+  height: 35px;
+}
+.today-places-item div:nth-child(3) {
+  text-transform: uppercase;
+  margin-left: 33px;
+}
+.forecast {
+  display: none;
+}
+.forecast-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 3px;
+  background-color: #d7d7d7;
+  padding-bottom: 23px;
+}
+.forecast-cards-card {
+  width: 167px;
+  padding: 30px 36px 27px 36px;
+  background-color: #fff;
+}
+.forecast-cards-card div:nth-child(2) {
+  text-transform: uppercase;
+  margin-top: 15px;
+}
+.forecast-cards-card div:nth-child(3) {
+  width: 80px;
+  height: 80px;
+  margin-top: 17px;
+  margin-left: 3px;
+}
+.forecast-cards-card div:nth-child(4) {
+  text-transform: uppercase;
+  font-size: 24pt;
+  margin-top: 10px;
+}
+.forecast-cards-card div:last-child {
+  margin-top: 3px;
+  font-size: 12pt;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.container {
+  margin: auto;
+  width: 916px;
+  background-color: grey;
+}
+img {
+  width: 100%;
+  height: 100%;
+}
+.header {
+  background-color: #f6f6f6;
+  margin-top: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11pt;
+  padding: 6px 35px 30px 35px;
+}
+.header h1 {
+  text-transform: uppercase;
+  color: #009694;
+}
+.header-search {
+  position: relative;
+}
+.header-search::before {
+  content: '';
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: url(../img/search.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  top: 12px;
+  right: 10px;
+}
+.header-search input {
+  border: 1.5px solid #dfdfdf;
+  padding: 7px 13px;
+  margin-top: 3px;
+  width: 300px;
+  font-size: 12pt;
+}
+.tabs {
+  background-color: #404040;
+  padding-left: 35px;
+  display: flex;
+}
+.tabs > div {
+  background-color: transparent;
+  color: #d7d7d7;
+  padding: 12px 37px 11px 37px;
+  font-size: 16pt;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+}
+.tabs-active {
+  border-bottom: 3px solid #009694 !important;
+  border-right: 1px solid #d7d7d7 !important;
+  border-left: 1px solid #d7d7d7 !important;
+}
+.main {
+  background-color: #d7d7d7;
+  padding: 24px 35px 24px 35px;
+  margin-bottom: 50px;
+}
+.item {
+  width: 100%;
+  background-color: white;
+  padding: 24px 25px 21px 25px;
+}
+.title {
+  text-transform: uppercase;
+  font-size: 12.7pt;
+  color: #009694;
+  font-weight: bold;
+}
+.table-name {
+  color: #94a3b1;
+}
+/*# sourceMappingURL=./style.css.map */
