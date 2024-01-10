@@ -136,19 +136,40 @@ $(document).ready(function () {
         return direction;
     }
 
-    function getCitiesNearby(latitude, longitude) {
-        console.log(latitude, longitude)
-        let url = `https://api.rasp.yandex.net/v3.0/nearest_settlement/?apikey=b415468a-c16e-4f01-b160-db8331cd370f&format=json&lat=${latitude}&lng=${longitude}&distance=50&lang=ru`;
+    function getCitiesNearby(localDataList, inputDataList) {
+        let latitude;
+        let longitude;
+        let data = localDataList ? localDataList : inputDataList;
 
-        fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-            "X-API-KEY": 'b415468a-c16e-4f01-b160-db8331cd370f',
-            }
-        })
+        latitude = data.city.coord.lat;
+        longitude = data.city.coord.lon;
+        console.log(latitude, longitude)
+        let url = `https://htmlweb.ru/api/geo/city_coming/?latitude=${latitude}&longitude=${longitude}&country=ru&level=2&length=500&json&api_key=71d62483cb50ad5592395b7e9ad12b49`;
+
+        fetch(url)
             .then(response => response.json())
             .then(cities => {
                 console.log(cities)
+                $('.today-places-item div:first-child').html('Нет данных');
+                $('.today-places-item div:first-child').each((i, el) => {
+                    console.log(cities.items[i].name)
+                    if(i < cities.items.length) {
+                        $(el).html(`${cities.items[i].name}`);
+                        let url = `https://api.openweathermap.org/data/2.5/weather?q=${cities.items[i].name}&appid=d2a0f08b173805303f97e6c81f81d80a`
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(weather => {
+                                console.log(Math.round(weather.main.temp - 273.15))
+                                $('.today-places-item div:last-child').eq(i).html(`${Math.round(weather.main.temp - 273.15)}&deg;C`);
+                                $('.today-places-item div:nth-child(2) img').each((i, el) => {
+                                    /* el.attr('src', `img/iconsWeather/${data.weather[0].icon.match(/\d\d/)}${dayOrNight}`) */
+                                })
+                            })
+                            .catch(
+                                $('.today-places-item div:last-child').eq(i).html('no')
+                            );
+                    }
+                })
             })
             .catch(console.error);
     }
@@ -172,13 +193,7 @@ $(document).ready(function () {
             .then(response => response.json())
             .then(inputDataList => {
                 getInputTime(localDataList, inputDataList);
-
-                if(inputCity) {
-                    getCitiesNearby(inputDataList.city.coord.lat, inputDataList.city.coord.lon);
-                } else {
-                    getCitiesNearby(localDataList.city.coord.lat, localDataList.city.coord.lon);
-                }
-                
+                getCitiesNearby('', inputDataList);
             })
             .catch(console.error);
     }
@@ -197,11 +212,14 @@ $(document).ready(function () {
             .then(localDataList => {
                 if(inputCity) {
                     getInputDataList(localDataList, inputCity);
+
                 } else {
                     getCurrentWeather(localDataList, '', getDayOrNight(localDataList, '', null));
                     for (let i = 0; i < 5; i++) {
                         getHourlyWeather(`.col-${i + 1}`, localDataList, '', i, getDayOrNight(localDataList, '', null, i + 1));
                     }
+
+                    getCitiesNearby(localDataList, '');
                 }
             })
             .catch(console.error);
