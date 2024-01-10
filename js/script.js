@@ -56,47 +56,44 @@ $(document).ready(function () {
         $('.today-current-temp div:last-child').html(`Real Feel ${JSON.stringify(Math.round(+data.main.feels_like - 273.15))}&deg;c`);
         $('.today-current-weather div:first-child img').attr('src', `img/iconsWeather/${data.weather[0].icon.match(/\d\d/)}${dayOrNight}.png`);
         $('.today-current-weather div:last-child').html(`${data.weather[0].description}`);
-        inputDataList ? console.log('input' + `: ${new Date((inputDataList.city.sunrise) * 1000)}`) : console.log('local' + `: ${new Date(localDataList.city.sunrise * 1000)}`)
-        console.log(differentTimeZone)
-        inputDataList ? console.log('input' + `: ${new Date((inputDataList.city.sunrise + differentTimeZone) * 1000)}`) : console.log('local' + `: ${new Date(localDataList.city.sunrise * 1000)}`)
         $('.sunrise').html(`${getTime(inputDataList ? inputDataList.city.sunrise + differentTimeZone : localDataList.city.sunrise, true)}`);
         $('.sunset').html(`${getTime(inputDataList ? inputDataList.city.sunset + differentTimeZone : localDataList.city.sunset, true)}`);
         $('.duration').html(`${getDuration(inputDataList ? {sunset: inputDataList.city.sunset , sunrise: inputDataList.city.sunrise} : {sunset: localDataList.city.sunset, sunrise: localDataList.city.sunrise})}`);
     }
 
     function getHourlyWeather(col, localDataList, inputDataList = '', index, dayOrNight) {
-        let dataList = inputDataList ? inputDataList : localDataList
+        const dataList = inputDataList ? inputDataList : localDataList
         $(`${col}`).each((i, el) => {
             let date = new Date(dataList.list[index].dt_txt);
             switch (true) {
                 case i == 0: $(el).html(`${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}${date.getHours() >= 12 ? 'pm' : 'am'}`);
-                    break;
+                break;
                 case i == 1: $(el).attr('src', `img/iconsWeather/${dataList.list[index].weather[0].icon.match(/\d\d/)[0]}${dayOrNight}.png`);
-                    break;
+                break;
                 case i == 2: $(el).html(`${dataList.list[index].weather[0].description}`);
-                    break;
+                break;
                 case i == 3: $(el).html(`${Math.round(+dataList.list[index].main.temp - 273.15)}&deg;`);
-                    break;
+                break;
                 case i == 4: $(el).html(`${Math.round(+dataList.list[index].main.feels_like - 273.15)}&deg;`);
-                    break;
+                break;
                 case i == 5: $(el).html(`${Math.round(dataList.list[index].wind.speed)} ${getDirectionOfTheWind(dataList.list[index].wind.deg)}`);
-                    break;
+                break;
             }
         });
     }
 
-    function getDayOrNight(localDataList, inputDataList = '') {
-        let differentTimeZone = 0;
-        if(inputDataList) {
-            differentTimeZone = inputDataList.city.timezone - localDataList.city.timezone;
-        }
+    function getDayOrNight(localDataList, inputDataList = '', inputTime, index = 0) {
+        const differentTimeZone = inputDataList ? inputDataList.city.timezone - localDataList.city.timezone : 0;
         const dataList = inputDataList ? inputDataList : localDataList;
         const sunrise = new Date((dataList.city.sunrise + differentTimeZone) * 1000).getHours();
         const sunset = new Date((dataList.city.sunset + differentTimeZone) * 1000).getHours();
-        const now = new Date().getHours();
+        let now = 0;
+        if(index) {
+            now = inputDataList ? new Date(inputDataList.list[index - 1].dt_txt).getHours() : new Date(localDataList.list[index - 1].dt_txt).getHours();
+        } else {
+            now = inputDataList ? new Date(inputTime.formatted).getHours() : new Date().getHours();
+        }
         const dayOrNight = now > sunrise && now < sunset ? 'd' : 'n';
-        console.log(dayOrNight)
-        console.log(`sinrise: ${sunrise}, sunset: ${sunset}, now: ${now}`)
         return dayOrNight;
     }
 
@@ -139,32 +136,54 @@ $(document).ready(function () {
         return direction;
     }
 
-    getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0]);
+    function getCitiesNearby(latitude, longitude) {
+        console.log(latitude, longitude)
+        let url = `https://api.rasp.yandex.net/v3.0/nearest_settlement/?apikey=b415468a-c16e-4f01-b160-db8331cd370f&format=json&lat=${latitude}&lng=${longitude}&distance=50&lang=ru`;
 
-    /* async function getCurrentPositionPromise() {
-        return new Promise((res, rej) => {
-            navigator.geolocation.getCurrentPosition(
-                (position) => res(position),
-                (e) => rej(e)
-            )
+        fetch(url, {
+            headers: {
+                "Content-Type": "application/json",
+            "X-API-KEY": 'b415468a-c16e-4f01-b160-db8331cd370f',
+            }
         })
+            .then(response => response.json())
+            .then(cities => {
+                console.log(cities)
+            })
+            .catch(console.error);
     }
 
-    async function currentGeoPositionRequest(input = '') {
-        try {
-            await getCurrentPositionPromise().then((data) => {
-                let url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${data.coords.latitude}&lon=${data.coords.longitude}&limit=5&appid=d2a0f08b173805303f97e6c81f81d80a`
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        getWeather(data[0].name, input);
-                    })
-            });
-        } catch(e) {
-            console.error('Error>>', e);
-        }
+    function getInputTime(localDataList, inputDataList) {
+        let url = `http://api.timezonedb.com/v2.1/get-time-zone?key=D6OP7HHYL80J&format=json&by=position&lat=${inputDataList.city.coord.lat}&lng=${inputDataList.city.coord.lon}`
+        fetch(url)
+            .then(response => response.json())
+            .then(inputTime => {
+                getCurrentWeather(localDataList, inputDataList, getDayOrNight(localDataList, inputDataList, inputTime));
+                for (let i = 0; i < 5; i++) {
+                    getHourlyWeather(`.col-${i + 1}`, localDataList, inputDataList, i, getDayOrNight(localDataList, inputDataList, inputTime, i + 1));
+                }
+            })
+            .catch(console.error);
     }
-    currentGeoPositionRequest(); */
+
+    function getInputDataList(localDataList, inputCity = '') {
+        let url = `https://api.openweathermap.org/data/2.5/forecast?q=${inputCity}&appid=d2a0f08b173805303f97e6c81f81d80a`;
+        fetch(url)
+            .then(response => response.json())
+            .then(inputDataList => {
+                getInputTime(localDataList, inputDataList);
+
+                if(inputCity) {
+                    getCitiesNearby(inputDataList.city.coord.lat, inputDataList.city.coord.lon);
+                } else {
+                    getCitiesNearby(localDataList.city.coord.lat, localDataList.city.coord.lon);
+                }
+                
+            })
+            .catch(console.error);
+    }
+
+    getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], '');
     
     $('.today-current-header div:last-child').html(`${time.currentDay}.${time.currentMonth > 9 ? time.currentMonth : `0${time.currentMonth}`}.${time.currentYear}`);
 
@@ -172,32 +191,16 @@ $(document).ready(function () {
         if(!inputCity) {
             $('.header input').attr('value', localCity);
         }
-
         let url = `https://api.openweathermap.org/data/2.5/forecast?q=${localCity}&appid=d2a0f08b173805303f97e6c81f81d80a`;
-
         await fetch(url)
             .then(response => response.json())
             .then(localDataList => {
-
                 if(inputCity) {
-                    let url = `https://api.openweathermap.org/data/2.5/forecast?q=${inputCity}&appid=d2a0f08b173805303f97e6c81f81d80a`;
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(inputDataList => {
-
-                            getCurrentWeather(localDataList, inputDataList, getDayOrNight(localDataList, inputDataList));
-                            for (let i = 0; i < 5; i++) {
-                                getHourlyWeather(`.col-${i + 1}`, localDataList, inputDataList, i, getDayOrNight(localDataList, inputDataList));
-                            }
-                            console.log(inputDataList)
-                            console.log(localDataList)
-                        })
-                        .catch(console.error);
+                    getInputDataList(localDataList, inputCity);
                 } else {
-
-                    getCurrentWeather(localDataList, '', getDayOrNight(localDataList, ''));
+                    getCurrentWeather(localDataList, '', getDayOrNight(localDataList, '', null));
                     for (let i = 0; i < 5; i++) {
-                        getHourlyWeather(`.col-${i + 1}`, localDataList, '', i, getDayOrNight(localDataList, ''));
+                        getHourlyWeather(`.col-${i + 1}`, localDataList, '', i, getDayOrNight(localDataList, '', null, i + 1));
                     }
                 }
             })
@@ -205,7 +208,7 @@ $(document).ready(function () {
     }
     $('.header input').keydown((e) => {
         if (e.which == 13) {
-            currentGeoPositionRequest($('.header input').val());
+            getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $('.header input').val());
         }
     });
 });
