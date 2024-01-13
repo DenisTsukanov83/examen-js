@@ -6,6 +6,7 @@ $(document).ready(function () {
     }
 
     tabs.tabs.click((e) => {
+        console.log($(e.terget))
         tabs.tabs.each(function () {
             $(this).removeClass('tabs-active');
         });
@@ -149,21 +150,17 @@ $(document).ready(function () {
         fetch(url)
             .then(response => response.json())
             .then(cities => {
-                console.log(cities)
                 $('.today-places-item div:first-child').html('Нет данных');
                 $('.today-places-item div:first-child').each((i, el) => {
-                    console.log(cities.items[i].name)
                     if(i < cities.items.length) {
                         $(el).html(`${cities.items[i].name}`);
                         let url = `https://api.openweathermap.org/data/2.5/weather?q=${cities.items[i].name}&appid=d2a0f08b173805303f97e6c81f81d80a`
                         fetch(url)
                             .then(response => response.json())
                             .then(weather => {
-                                console.log(Math.round(weather.main.temp - 273.15))
+                                console.log(weather.weather[0].icon)
                                 $('.today-places-item div:last-child').eq(i).html(`${Math.round(weather.main.temp - 273.15)}&deg;C`);
-                                $('.today-places-item div:nth-child(2) img').each((i, el) => {
-                                    /* el.attr('src', `img/iconsWeather/${data.weather[0].icon.match(/\d\d/)}${dayOrNight}`) */
-                                })
+                                $('.today-places-item div:nth-child(2) img').eq(i).attr('src', `img/iconsWeather/${weather.weather[0].icon}.png`)
                             })
                             .catch(
                                 $('.today-places-item div:last-child').eq(i).html('no')
@@ -203,8 +200,11 @@ $(document).ready(function () {
     $('.today-current-header div:last-child').html(`${time.currentDay}.${time.currentMonth > 9 ? time.currentMonth : `0${time.currentMonth}`}.${time.currentYear}`);
 
     async function getWeather(localCity, inputCity = '') {
+        
         if(!inputCity) {
-            $('.header input').attr('value', localCity);
+            $('.header input').val(localCity);
+        } else {
+            $('.header input').val(inputCity);
         }
         let url = `https://api.openweathermap.org/data/2.5/forecast?q=${localCity}&appid=d2a0f08b173805303f97e6c81f81d80a`;
         await fetch(url)
@@ -229,4 +229,11 @@ $(document).ready(function () {
             getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $('.header input').val());
         }
     });
+
+    $('.today-places-item').click((e) => {
+        e.preventDefault()
+        console.log($(e.target).closest('.today-places-item').children('div:first-child').text())
+        getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $(e.target).closest('.today-places-item').children('div:first-child').text())
+        
+    })
 });
