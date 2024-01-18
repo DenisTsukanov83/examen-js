@@ -6,7 +6,6 @@ $(document).ready(function () {
     }
 
     tabs.tabs.click((e) => {
-        console.log($(e.terget))
         tabs.tabs.each(function () {
             $(this).removeClass('tabs-active');
         });
@@ -31,6 +30,8 @@ $(document).ready(function () {
         get currentYear() {
             return this.currentDate.getFullYear();
         },
+        days: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+        month: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
         oneDay: 1000 * 60 * 60 * 24,
         oneHour: 1000 * 60 * 60,
         oneMinute: 1000 * 60
@@ -144,7 +145,6 @@ $(document).ready(function () {
 
         latitude = data.city.coord.lat;
         longitude = data.city.coord.lon;
-        console.log(latitude, longitude)
         let url = `https://htmlweb.ru/api/geo/city_coming/?latitude=${latitude}&longitude=${longitude}&country=ru&level=2&length=500&json&api_key=71d62483cb50ad5592395b7e9ad12b49`;
 
         fetch(url)
@@ -158,7 +158,6 @@ $(document).ready(function () {
                         fetch(url)
                             .then(response => response.json())
                             .then(weather => {
-                                console.log(weather.weather[0].icon)
                                 $('.today-places-item div:last-child').eq(i).html(`${Math.round(weather.main.temp - 273.15)}&deg;C`);
                                 $('.today-places-item div:nth-child(2) img').eq(i).attr('src', `img/iconsWeather/${weather.weather[0].icon}.png`)
                             })
@@ -212,6 +211,7 @@ $(document).ready(function () {
             .then(localDataList => {
                 if(inputCity) {
                     getInputDataList(localDataList, inputCity);
+                    console.log(localDataList)
 
                 } else {
                     getCurrentWeather(localDataList, '', getDayOrNight(localDataList, '', null));
@@ -220,6 +220,41 @@ $(document).ready(function () {
                     }
 
                     getCitiesNearby(localDataList, '');
+                    console.log(localDataList)
+                    
+                    console.log($('.forecast-cards-card .title'))
+
+                    for(let i = 0; i < 5; i++) {
+                        console.log($('.forecast-cards-card .title').eq(i).text())
+                        switch(true) {
+                            case i == 0: {
+                                $('.forecast-cards-card .title').eq(i).text('tonight');
+                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[0].dt_txt).getMonth()]} ${new Date(localDataList.list[0].dt_txt).getDate()}`);
+                            }
+                            break;
+                            case i == 1: {
+                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[8].dt_txt).getDay()]}`);
+                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[8].dt_txt).getMonth()]} ${new Date(localDataList.list[8].dt_txt).getDate()}`);
+                            }
+                            break;
+                            case i == 2: {
+                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[16].dt_txt).getDay()]}`);
+                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[16].dt_txt).getMonth()]} ${new Date(localDataList.list[16].dt_txt).getDate()}`);
+                            }
+                            break;
+                            case i == 3: {
+                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[24].dt_txt).getDay()]}`);
+                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[24].dt_txt).getMonth()]} ${new Date(localDataList.list[24].dt_txt).getDate()}`);
+                            }
+                            break;
+                            case i == 4: {
+                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[32].dt_txt).getDay()]}`);
+                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[32].dt_txt).getMonth()]} ${new Date(localDataList.list[32].dt_txt).getDate()}`);
+                            }
+                            break;
+                        }
+                    }
+
                 }
             })
             .catch(console.error);
@@ -232,7 +267,6 @@ $(document).ready(function () {
 
     $('.today-places-item').click((e) => {
         e.preventDefault()
-        console.log($(e.target).closest('.today-places-item').children('div:first-child').text())
         getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $(e.target).closest('.today-places-item').children('div:first-child').text())
         
     })
