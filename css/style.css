@@ -99,6 +99,18 @@
 .forecast {
   display: none;
 }
+.forecast-hourly-main {
+  display: grid;
+  grid-template-columns: 139px 80px 80px 80px 80px 80px;
+  grid-template-rows: 42px 90px 44px 44px 44px 44px;
+  column-gap: 40px;
+  margin-top: 35px;
+  padding: 0 25px;
+}
+.forecast-hourly-main > div:first-child {
+  text-transform: uppercase;
+  font-weight: bold;
+}
 .forecast-cards {
   display: flex;
   justify-content: space-between;
@@ -109,7 +121,8 @@
 .forecast-cards-card {
   width: 167px;
   padding: 30px 36px 27px 36px;
-  background-color: #fff;
+  background-color: #ededed;
+  cursor: pointer;
 }
 .forecast-cards-card div:nth-child(2) {
   text-transform: uppercase;
@@ -129,6 +142,9 @@
 .forecast-cards-card div:last-child {
   margin-top: 3px;
   font-size: 12pt;
+}
+.forecast-active {
+  background-color: #fff;
 }
 * {
   margin: 0;

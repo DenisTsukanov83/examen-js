@@ -19,6 +19,20 @@ $(document).ready(function () {
         }
     });
 
+    
+    function clickForecast(data) {
+        $('.forecast-cards-card').off('click');
+        $('.forecast-cards-card').click((e) => {
+            $('.forecast-cards-card').removeClass('forecast-active');
+            if($(e.target).parents('.forecast-cards-card').length) {
+                $(e.target).parents('.forecast-cards-card').addClass('forecast-active');
+            } else {
+                $(e.target).addClass('forecast-active');
+            }
+            
+        });
+    }
+
     const time = {
         currentDate: new Date,
         get currentDay() {
@@ -190,8 +204,58 @@ $(document).ready(function () {
             .then(inputDataList => {
                 getInputTime(localDataList, inputDataList);
                 getCitiesNearby('', inputDataList);
+                showForecast(inputDataList);
             })
             .catch(console.error);
+    }
+
+    function showForecast(data) {
+        for(let i = 0; i < 5; i++) {
+            console.log($('.forecast-cards-card .title').eq(i).text())
+            switch(true) {
+                case i == 0: {
+                    $('.forecast-cards-card .title').eq(i).text('tonight');
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(data.list[0].dt_txt).getMonth()]} ${new Date(data.list[0].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${data.list[0].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(data.list[0].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${data.list[0].weather[0].description}`);
+                }
+                break;
+                case i == 1: {
+                    $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(data.list[8].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(data.list[8].dt_txt).getMonth()]} ${new Date(data.list[8].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${data.list[8].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(data.list[8].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${data.list[8].weather[0].description}`);
+                }
+                break;
+                case i == 2: {
+                    $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(data.list[16].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(data.list[16].dt_txt).getMonth()]} ${new Date(data.list[16].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${data.list[16].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(data.list[16].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${data.list[16].weather[0].description}`);
+                }
+                break;
+                case i == 3: {
+                    $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(data.list[24].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(data.list[24].dt_txt).getMonth()]} ${new Date(data.list[24].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${data.list[24].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(data.list[24].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${data.list[24].weather[0].description}`);
+                }
+                break;
+                case i == 4: {
+                    $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(data.list[32].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(data.list[32].dt_txt).getMonth()]} ${new Date(data.list[32].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${data.list[32].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(data.list[32].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${data.list[32].weather[0].description}`);
+                }
+                break;
+            }
+            getHourlyWeather(`.forecast-hourly-main .col-${i + 1}`, data, '', i, getDayOrNight(data, '', null, i + 1))
+        }
     }
 
     getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], '');
@@ -216,7 +280,7 @@ $(document).ready(function () {
                 } else {
                     getCurrentWeather(localDataList, '', getDayOrNight(localDataList, '', null));
                     for (let i = 0; i < 5; i++) {
-                        getHourlyWeather(`.col-${i + 1}`, localDataList, '', i, getDayOrNight(localDataList, '', null, i + 1));
+                        getHourlyWeather(`.today-hourly-main .col-${i + 1}`, localDataList, '', i, getDayOrNight(localDataList, '', null, i + 1));
                     }
 
                     getCitiesNearby(localDataList, '');
@@ -224,36 +288,8 @@ $(document).ready(function () {
                     
                     console.log($('.forecast-cards-card .title'))
 
-                    for(let i = 0; i < 5; i++) {
-                        console.log($('.forecast-cards-card .title').eq(i).text())
-                        switch(true) {
-                            case i == 0: {
-                                $('.forecast-cards-card .title').eq(i).text('tonight');
-                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[0].dt_txt).getMonth()]} ${new Date(localDataList.list[0].dt_txt).getDate()}`);
-                            }
-                            break;
-                            case i == 1: {
-                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[8].dt_txt).getDay()]}`);
-                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[8].dt_txt).getMonth()]} ${new Date(localDataList.list[8].dt_txt).getDate()}`);
-                            }
-                            break;
-                            case i == 2: {
-                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[16].dt_txt).getDay()]}`);
-                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[16].dt_txt).getMonth()]} ${new Date(localDataList.list[16].dt_txt).getDate()}`);
-                            }
-                            break;
-                            case i == 3: {
-                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[24].dt_txt).getDay()]}`);
-                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[24].dt_txt).getMonth()]} ${new Date(localDataList.list[24].dt_txt).getDate()}`);
-                            }
-                            break;
-                            case i == 4: {
-                                $('.forecast-cards-card .title').eq(i).text(`${time.days[new Date(localDataList.list[32].dt_txt).getDay()]}`);
-                                $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${time.month[new Date(localDataList.list[32].dt_txt).getMonth()]} ${new Date(localDataList.list[32].dt_txt).getDate()}`);
-                            }
-                            break;
-                        }
-                    }
+                    showForecast(localDataList);
+                    clickForecast(localDataList);
 
                 }
             })
