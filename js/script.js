@@ -19,15 +19,55 @@ $(document).ready(function () {
         }
     });
 
+    function showHourlyForecast(el, data) {
+        switch(true) {
+            case el.hasClass('card-1'): {
+                for(let i = 0; i < 5; i++) {
+                    getHourlyWeather(`.forecast-hourly-main .col-${i + 1}`, data, '', i, getDayOrNight(data, '', null, i + 1));
+                }
+            }
+            break;
+            case el.hasClass('card-2'): {
+                for(let i = 8; i < 13; i++) {
+                    getHourlyWeather(`.forecast-hourly-main .col-${i - 8}`, data, '', i, getDayOrNight(data, '', null, i + 1));
+                }
+            }
+            break;
+            case el.hasClass('card-3'): {
+                for(let i = 16; i < 21; i++) {
+                    getHourlyWeather(`.forecast-hourly-main .col-${i - 16}`, data, '', i, getDayOrNight(data, '', null, i + 1));
+                }
+            }
+            break;
+            case el.hasClass('card-4'): {
+                for(let i = 24; i < 29; i++) {
+                    getHourlyWeather(`.forecast-hourly-main .col-${i - 24}`, data, '', i, getDayOrNight(data, '', null, i + 1));
+                }
+            }
+            break;
+            case el.hasClass('card-5'): {
+                for(let i = 32; i < 37; i++) {
+                    getHourlyWeather(`.forecast-hourly-main .col-${i - 32}`, data, '', i, getDayOrNight(data, '', null, i + 1));
+                }
+            }
+            break;
+        }
+    }
+
     
     function clickForecast(data) {
-        $('.forecast-cards-card').off('click');
         $('.forecast-cards-card').click((e) => {
             $('.forecast-cards-card').removeClass('forecast-active');
-            if($(e.target).parents('.forecast-cards-card').length) {
+            if($(e.target).parents('.forecast-cards-card').length || $(e.target).has('.forecast-cards-card')) {
                 $(e.target).parents('.forecast-cards-card').addClass('forecast-active');
-            } else {
-                $(e.target).addClass('forecast-active');
+                if($(e.target).parents('.forecast-cards-card').length) {
+                    console.log('child')
+                    showHourlyForecast($(e.target).parents('.forecast-cards-card'), data);
+                } else if($(e.target).has('.forecast-cards-card')) {
+                    $(e.target).addClass('forecast-active');
+                    showHourlyForecast($(e.target), data);
+                    console.log('parent')
+                }
             }
             
         });
@@ -45,6 +85,7 @@ $(document).ready(function () {
             return this.currentDate.getFullYear();
         },
         days: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+        days2: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
         month: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
         oneDay: 1000 * 60 * 60 * 24,
         oneHour: 1000 * 60 * 60,
@@ -78,9 +119,10 @@ $(document).ready(function () {
     }
 
     function getHourlyWeather(col, localDataList, inputDataList = '', index, dayOrNight) {
-        const dataList = inputDataList ? inputDataList : localDataList
+        const dataList = inputDataList ? inputDataList : localDataList;
         $(`${col}`).each((i, el) => {
             let date = new Date(dataList.list[index].dt_txt);
+            
             switch (true) {
                 case i == 0: $(el).html(`${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}${date.getHours() >= 12 ? 'pm' : 'am'}`);
                 break;
@@ -211,7 +253,6 @@ $(document).ready(function () {
 
     function showForecast(data) {
         for(let i = 0; i < 5; i++) {
-            console.log($('.forecast-cards-card .title').eq(i).text())
             switch(true) {
                 case i == 0: {
                     $('.forecast-cards-card .title').eq(i).text('tonight');
@@ -254,8 +295,12 @@ $(document).ready(function () {
                 }
                 break;
             }
-            getHourlyWeather(`.forecast-hourly-main .col-${i + 1}`, data, '', i, getDayOrNight(data, '', null, i + 1))
+            $(`.forecast-hourly-main .col-${i}`).each((j, el) => {
+                getHourlyWeather(`.forecast-hourly-main .col-${j + 1}`, data, '', j, getDayOrNight(data, '', null, i + 1));
+            })
         }
+
+        $('.forecast-hourly-main>div:first-child').text(`${time.days2[new Date(data.list[0].dt_txt).getDay()]}`);
     }
 
     getWeather(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], '');
@@ -285,8 +330,6 @@ $(document).ready(function () {
 
                     getCitiesNearby(localDataList, '');
                     console.log(localDataList)
-                    
-                    console.log($('.forecast-cards-card .title'))
 
                     showForecast(localDataList);
                     clickForecast(localDataList);
