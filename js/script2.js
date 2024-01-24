@@ -59,7 +59,8 @@ $(document).ready(function () {
                             console.log(inputWeather)
 
                             showCurrentWeather(inputWeather, localWeater, currentTime);
-                            showHourlyWeather('.today-hourly-main', inputWeather, 0, currentTime);
+                            showHourlyWeather('.today-hourly-main', inputWeather, localWeater, 0, currentTime);
+                            getCitiesNearby(inputWeather);
                         })
                     })
             })
@@ -73,7 +74,7 @@ $(document).ready(function () {
     function showCurrentWeather(inputData, localData, time) {
         $('.today-current-temp div:first-child').html(`${Math.round(+inputData.list[0].main.temp - 273.15)}&deg;c`);
         $('.today-current-temp div:last-child').html(`Real Feel ${Math.round(+inputData.list[0].main.feels_like - 273.15)}&deg;c`);
-        $('.today-current-weather div:first-child img').attr('src', `img/iconsWeather/${inputData.list[0].weather[0].icon.match(/\d\d/)}${getDayOrNight(inputData, time)}.png`);
+        $('.today-current-weather div:first-child img').attr('src', `img/iconsWeather/${inputData.list[0].weather[0].icon.match(/\d\d/)}${getDayOrNight(inputData, localData, time, 0)}.png`);
         $('.today-current-weather div:last-child').html(`${inputData.list[0].weather[0].description}`);
         $('.sunrise').html(`${getTime(inputData, localData, 'sunrise', true)}`);
         $('.sunset').html(`${getTime(inputData, localData, 'sunset', true)}`);
@@ -81,24 +82,24 @@ $(document).ready(function () {
     }
 
     //Определить день или ночь
-    function getDayOrNight(data, time) {
-        const currentTime = new Date(time).getHours();
-        const sunrise = new Date(data.city.sunrise * 1000).getHours();
-        const sunset = new Date(data.city.sunset * 1000).getHours();
-        console.log(currentTime, sunrise, sunset)
+    function getDayOrNight(inputData, localData, time = '', index) {
+        const differentTimeZone = inputData.city.timezone - localData.city.timezone;
+        const currentTime = new Date(time ? time : inputData.list[index].dt_txt).getHours();
+        const sunrise = new Date((inputData.city.sunrise + differentTimeZone) * 1000).getHours();
+        const sunset = new Date((inputData.city.sunset + differentTimeZone) * 1000).getHours();
         let timeLetter = '';
         currentTime > sunrise && currentTime < sunset ? timeLetter = 'd' : timeLetter = 'n';
         return timeLetter;
     }
 
     //Получить время: заката, рассевета PM или AM
-    function getTime(inputTime, localTime, time, upper) {
-        let differentTimeZone = inputTime.city.timezone - localTime.city.timezone;
+    function getTime(inputData, localData, time, upper) {
+        const differentTimeZone = inputData.city.timezone - localData.city.timezone;
         let timesOfDay = '';
         if(time == 'sunrise') {
-            timesOfDay = inputTime.city.sunrise;
+            timesOfDay = inputData.city.sunrise;
         } else if(time == 'sunset') {
-            timesOfDay = inputTime.city.sunset;
+            timesOfDay = inputData.city.sunset;
         }
 
         let data = new Date((timesOfDay + differentTimeZone) * 1000);
@@ -113,7 +114,7 @@ $(document).ready(function () {
     }
 
     //Показать почасовую погоду
-    function showHourlyWeather(parent, data, index, time) {
+    function showHourlyWeather(parent, inputData, localData, index) {
         let shift = 0;
         switch(true) {
             case index == 0: shift = 0;
@@ -130,20 +131,20 @@ $(document).ready(function () {
         
         for(let col = 0; col < 5; col++) {
             $(`${parent} .col-${col + 1}`).each((i, el) => {
-                let date = new Date(data.list[col + shift].dt_txt);
+                let date = new Date(inputData.list[col + shift].dt_txt);
                 
                 switch (true) {
                     case i == 0: $(el).html(`${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}${date.getHours() >= 12 ? 'pm' : 'am'}`);
                     break;
-                    case i == 1: $(el).attr('src', `img/iconsWeather/${data.list[col + shift].weather[0].icon.match(/\d\d/)[0]}${getDayOrNight(data, time)}.png`);
+                    case i == 1: $(el).attr('src', `img/iconsWeather/${inputData.list[col + shift].weather[0].icon.match(/\d\d/)[0]}${getDayOrNight(inputData, localData, '', col)}.png`);
                     break;
-                    case i == 2: $(el).html(`${data.list[col + shift].weather[0].description}`);
+                    case i == 2: $(el).html(`${inputData.list[col + shift].weather[0].description}`);
                     break;
-                    case i == 3: $(el).html(`${Math.round(+data.list[col + shift].main.temp - 273.15)}&deg;`);
+                    case i == 3: $(el).html(`${Math.round(+inputData.list[col + shift].main.temp - 273.15)}&deg;`);
                     break;
-                    case i == 4: $(el).html(`${Math.round(+data.list[col + shift].main.feels_like - 273.15)}&deg;`);
+                    case i == 4: $(el).html(`${Math.round(+inputData.list[col + shift].main.feels_like - 273.15)}&deg;`);
                     break;
-                    case i == 5: $(el).html(`${Math.round(data.list[col + shift].wind.speed)} ${getDirectionOfTheWind(data.list[col + shift].wind.deg)}`);
+                    case i == 5: $(el).html(`${Math.round(inputData.list[col + shift].wind.speed)} ${getDirectionOfTheWind(inputData.list[col + shift].wind.deg)}`);
                     break;
                 }
             });
@@ -191,6 +192,41 @@ $(document).ready(function () {
         return direction;
     }
 
+    //Получение данных ближайших городов
+    function getCitiesNearby(inputDataList) {
+        console.log(true)
+        let latitude;
+        let longitude;
+        let data = inputDataList;
+
+        latitude = data.city.coord.lat;
+        longitude = data.city.coord.lon;
+
+        fetch(`https://htmlweb.ru/api/geo/city_coming/?latitude=${latitude}&longitude=${longitude}&country=ru&level=2&length=500&json&api_key=71d62483cb50ad5592395b7e9ad12b49`)
+            .then(response => response.json())
+            .then(cities => {
+                console.log(cities)
+                $('.today-places-item div:first-child').html('Нет данных');
+                $('.today-places-item div:first-child').each((i, el) => {
+                    if(i < cities.items.length) {
+                        console.log(cities.items[i].name, i)
+                        $(el).html(`${cities.items[i + 1].name}`);
+
+                        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cities.items[i + 1].name}&appid=d2a0f08b173805303f97e6c81f81d80a`)
+                            .then(response => response.json())
+                            .then(weather => {
+                                $('.today-places-item div:last-child').eq(i).html(`${Math.round(+weather.main.temp - 273.15)}&deg;C`);
+                                $('.today-places-item div:nth-child(2) img').eq(i).attr('src', `img/iconsWeather/${weather.weather[0].icon}.png`)
+                            })
+                            .catch(
+                                $('.today-places-item div:last-child').eq(i).html('no')
+                            );
+                    }
+                })
+            })
+            .catch(console.error);
+    }
+
     //Вывод текущей даты на страницу
     $('.today-current-header div:last-child').html(`${timeObj.currentDay}.${timeObj.currentMonth > 9 ? timeObj.currentMonth : `0${timeObj.currentMonth}`}.${timeObj.currentYear}`);
 
@@ -200,4 +236,11 @@ $(document).ready(function () {
             getWeather();
         }
     });
+
+    $('.today-places-item').click((e) => {
+        e.preventDefault();
+        $('.header-search input').val($(e.target).closest('.today-places-item').children('div:first-child').text())
+        getWeather();
+        console.log(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $(e.target).closest('.today-places-item').children('div:first-child').text())
+    })
 });
