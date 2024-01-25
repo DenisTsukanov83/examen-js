@@ -61,6 +61,8 @@ $(document).ready(function () {
                             showCurrentWeather(inputWeather, localWeater, currentTime);
                             showHourlyWeather('.today-hourly-main', inputWeather, localWeater, 0, currentTime);
                             getCitiesNearby(inputWeather);
+                            showForecast(inputWeather, localWeater);
+                            clickForecast(inputWeather, localWeater);
                         })
                     })
             })
@@ -202,6 +204,7 @@ $(document).ready(function () {
         latitude = data.city.coord.lat;
         longitude = data.city.coord.lon;
 
+        //Получение ближайших городов
         fetch(`https://htmlweb.ru/api/geo/city_coming/?latitude=${latitude}&longitude=${longitude}&country=ru&level=2&length=500&json&api_key=71d62483cb50ad5592395b7e9ad12b49`)
             .then(response => response.json())
             .then(cities => {
@@ -212,6 +215,7 @@ $(document).ready(function () {
                         console.log(cities.items[i].name, i)
                         $(el).html(`${cities.items[i + 1].name}`);
 
+                        //Получение погоды ближайших городов
                         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cities.items[i + 1].name}&appid=d2a0f08b173805303f97e6c81f81d80a`)
                             .then(response => response.json())
                             .then(weather => {
@@ -225,6 +229,89 @@ $(document).ready(function () {
                 })
             })
             .catch(console.error);
+    }
+
+    function clickForecast(inputData, localData) {
+        $('.forecast-cards-card').click((e) => {
+            $('.forecast-cards-card').removeClass('forecast-active');
+            if($(e.target).parents('.forecast-cards-card').length || $(e.target).has('.forecast-cards-card')) {
+                $(e.target).parents('.forecast-cards-card').addClass('forecast-active');
+                let el
+                if($(e.target).parents('.forecast-cards-card').length) {
+                    /* showHourlyWeather('.forecast-hourly-main', inputData, localData, j); */
+                    el = $(e.target).parents('.forecast-cards-card');
+                } else if($(e.target).has('.forecast-cards-card')) {
+                    $(e.target).addClass('forecast-active');
+                    /* showHourlyWeather('.forecast-hourly-main', inputData, localData, j); */
+                    el = $(e.target);
+                }
+                switch(true) {
+                    case el.hasClass('card-1'): showHourlyWeather('.forecast-hourly-main', inputData, localData, 0);
+                    break;
+                    case el.hasClass('card-2'): showHourlyWeather('.forecast-hourly-main', inputData, localData, 1);
+                    break;
+                    case el.hasClass('card-3'): showHourlyWeather('.forecast-hourly-main', inputData, localData, 2);
+                    break;
+                    case el.hasClass('card-4'): showHourlyWeather('.forecast-hourly-main', inputData, localData, 3);
+                    break;
+                    case el.hasClass('card-5'): showHourlyWeather('.forecast-hourly-main', inputData, localData, 4);
+                    break;
+                }
+            }
+            
+        });
+    }
+
+    function showForecast(inputData, localData) {
+        for(let i = 0; i < 5; i++) {
+            switch(true) {
+                case i == 0: {
+                    $('.forecast-cards-card .title').eq(i).text('tonight');
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${timeObj.month[new Date(inputData.list[0].dt_txt).getMonth()]} ${new Date(inputData.list[0].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${inputData.list[0].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(inputData.list[0].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${inputData.list[0].weather[0].description}`);
+                }
+                break;
+                case i == 1: {
+                    $('.forecast-cards-card .title').eq(i).text(`${timeObj.days[new Date(inputData.list[8].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${timeObj.month[new Date(inputData.list[8].dt_txt).getMonth()]} ${new Date(inputData.list[8].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${inputData.list[8].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(inputData.list[8].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${inputData.list[8].weather[0].description}`);
+                }
+                break;
+                case i == 2: {
+                    $('.forecast-cards-card .title').eq(i).text(`${timeObj.days[new Date(inputData.list[16].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${timeObj.month[new Date(inputData.list[16].dt_txt).getMonth()]} ${new Date(inputData.list[16].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${inputData.list[16].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(inputData.list[16].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${inputData.list[16].weather[0].description}`);
+                }
+                break;
+                case i == 3: {
+                    $('.forecast-cards-card .title').eq(i).text(`${timeObj.days[new Date(inputData.list[24].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${timeObj.month[new Date(inputData.list[24].dt_txt).getMonth()]} ${new Date(inputData.list[24].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${inputData.list[24].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(inputData.list[24].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${inputData.list[24].weather[0].description}`);
+                }
+                break;
+                case i == 4: {
+                    $('.forecast-cards-card .title').eq(i).text(`${timeObj.days[new Date(inputData.list[32].dt_txt).getDay()]}`);
+                    $('.forecast-cards-card div:nth-child(2)').eq(i).text(`${timeObj.month[new Date(inputData.list[32].dt_txt).getMonth()]} ${new Date(inputData.list[32].dt_txt).getDate()}`);
+                    $('.forecast-cards-card div:nth-child(3) img').eq(i).attr('src', `img/iconsWeather/${inputData.list[32].weather[0].icon}.png`);
+                    $('.forecast-cards-card div:nth-child(4)').eq(i).html(`${Math.round(inputData.list[32].main.temp - 273.15)}&deg;c`);
+                    $('.forecast-cards-card div:nth-child(5)').eq(i).text(`${inputData.list[32].weather[0].description}`);
+                }
+                break;
+            }
+            $(`.forecast-hourly-main .col-${i}`).each((j, el) => {
+                showHourlyWeather('.forecast-hourly-main', inputData, localData, j);
+            })
+        }
+
+        $('.forecast-hourly-main>div:first-child').text(`${timeObj.days2[new Date(inputData.list[0].dt_txt).getDay()]}`);
     }
 
     //Вывод текущей даты на страницу
@@ -242,5 +329,5 @@ $(document).ready(function () {
         $('.header-search input').val($(e.target).closest('.today-places-item').children('div:first-child').text())
         getWeather();
         console.log(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $(e.target).closest('.today-places-item').children('div:first-child').text())
-    })
+    });
 });
