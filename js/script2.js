@@ -55,8 +55,6 @@ $(document).ready(function () {
                         .then(response => response.json())
                         .then(time => {
                             const currentTime = time.formatted;
-                            console.log(localWeater)
-                            console.log(inputWeather)
 
                             showCurrentWeather(inputWeather, localWeater, currentTime);
                             showHourlyWeather('.today-hourly-main', inputWeather, localWeater, 0, currentTime);
@@ -130,13 +128,15 @@ $(document).ready(function () {
             case index == 4: shift = 32;
             break;
         }
+
+        $('.forecast-hourly-main>div:first-child').text(timeObj.days2[new Date(inputData.list[shift].dt_txt).getDay()]);
         
         for(let col = 0; col < 5; col++) {
             $(`${parent} .col-${col + 1}`).each((i, el) => {
                 let date = new Date(inputData.list[col + shift].dt_txt);
                 
                 switch (true) {
-                    case i == 0: $(el).html(`${date.getHours() > 12 ? date.getHours() - 12 : date.getHours()}${date.getHours() >= 12 ? 'pm' : 'am'}`);
+                    case i == 0: $(el).html(`${date.getHours() > 12 ? date.getHours() == 0 ? 12 : date.getHours() - 12 : date.getHours() == 0 ? 12 : date.getHours()}${date.getHours() >= 12 ? 'pm' : 'am'}`);
                     break;
                     case i == 1: $(el).attr('src', `img/iconsWeather/${inputData.list[col + shift].weather[0].icon.match(/\d\d/)[0]}${getDayOrNight(inputData, localData, '', col)}.png`);
                     break;
@@ -196,7 +196,6 @@ $(document).ready(function () {
 
     //Получение данных ближайших городов
     function getCitiesNearby(inputDataList) {
-        console.log(true)
         let latitude;
         let longitude;
         let data = inputDataList;
@@ -208,19 +207,18 @@ $(document).ready(function () {
         fetch(`https://htmlweb.ru/api/geo/city_coming/?latitude=${latitude}&longitude=${longitude}&country=ru&level=2&length=500&json&api_key=71d62483cb50ad5592395b7e9ad12b49`)
             .then(response => response.json())
             .then(cities => {
-                console.log(cities)
                 $('.today-places-item div:first-child').html('Нет данных');
+                $('.today-places-item div:nth-child(2) img').attr('src', 'img/no.png')
                 $('.today-places-item div:first-child').each((i, el) => {
                     if(i < cities.items.length) {
-                        console.log(cities.items[i].name, i)
                         $(el).html(`${cities.items[i + 1].name}`);
-
+                        console.log(cities.items[i + 1].name)
                         //Получение погоды ближайших городов
                         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cities.items[i + 1].name}&appid=d2a0f08b173805303f97e6c81f81d80a`)
                             .then(response => response.json())
                             .then(weather => {
                                 $('.today-places-item div:last-child').eq(i).html(`${Math.round(+weather.main.temp - 273.15)}&deg;C`);
-                                $('.today-places-item div:nth-child(2) img').eq(i).attr('src', `img/iconsWeather/${weather.weather[0].icon}.png`)
+                                $('.today-places-item div:nth-child(2) img').eq(i).attr('src', `img/iconsWeather/${weather.weather[0].icon}.png`);
                             })
                             .catch(
                                 $('.today-places-item div:last-child').eq(i).html('no')
@@ -238,11 +236,9 @@ $(document).ready(function () {
                 $(e.target).parents('.forecast-cards-card').addClass('forecast-active');
                 let el
                 if($(e.target).parents('.forecast-cards-card').length) {
-                    /* showHourlyWeather('.forecast-hourly-main', inputData, localData, j); */
                     el = $(e.target).parents('.forecast-cards-card');
                 } else if($(e.target).has('.forecast-cards-card')) {
                     $(e.target).addClass('forecast-active');
-                    /* showHourlyWeather('.forecast-hourly-main', inputData, localData, j); */
                     el = $(e.target);
                 }
                 switch(true) {
@@ -308,7 +304,7 @@ $(document).ready(function () {
             }
             $(`.forecast-hourly-main .col-${i}`).each((j, el) => {
                 showHourlyWeather('.forecast-hourly-main', inputData, localData, j);
-            })
+            });
         }
 
         $('.forecast-hourly-main>div:first-child').text(`${timeObj.days2[new Date(inputData.list[0].dt_txt).getDay()]}`);
@@ -328,6 +324,5 @@ $(document).ready(function () {
         e.preventDefault();
         $('.header-search input').val($(e.target).closest('.today-places-item').children('div:first-child').text())
         getWeather();
-        console.log(moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0], $(e.target).closest('.today-places-item').children('div:first-child').text())
     });
 });
