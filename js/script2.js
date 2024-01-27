@@ -20,19 +20,26 @@ $(document).ready(function () {
     }
 
     //Переключение табов
-    $('.tab').click((e) => {
-        $('.tab').each(function () {
-            $(this).removeClass('tabs-active');
-        });
-        $(e.target).addClass('tabs-active');
-        if ($(e.target).text() == 'Today') {
-            $('.forecast').hide();
-            $('.today').show();
-        } else if ($(e.target).text() == '5-day forecast') {
-            $('.forecast').show();
-            $('.today').hide();
+    function toggleTabs(success) {
+        console.log(success)
+        if(success) {
+            $('.tab').click((e) => {
+                $('.tab').each(function () {
+                    $(this).removeClass('tabs-active');
+                });
+                $(e.target).addClass('tabs-active');
+                if ($(e.target).text() == 'Today') {
+                    $('.forecast').hide();
+                    $('.today').show();
+                } else if ($(e.target).text() == '5-day forecast') {
+                    $('.forecast').show();
+                    $('.today').hide();
+                }
+            });
+        } else {
+            $('.tab').off('click');
         }
-    });
+    }
 
     //Получение локации пк
     $('.header-search input').val(`${moment.tz.guess().match(/\/\w{1,}/gi).toString().match(/\w{1,}/gi)[0]}`);
@@ -62,8 +69,21 @@ $(document).ready(function () {
                             showForecast(inputWeather, localWeater);
                             clickForecast(inputWeather, localWeater);
                         })
+                    .then(() => {
+                        toggleTabs(true);
+                        $('.today').show();
+                        $('.not-found').hide();
+                        $('.tab').removeClass('tabs-active');
+                        $('.tab').eq(0).addClass('tabs-active');
                     })
-            })
+                    }).catch(() => {
+                        $('.today').hide();
+                        $('.forecast').hide();
+                        $('.not-found').show();
+                        $('.not-found h2 span').text(`${inputCity}`);
+                        toggleTabs(false);
+                    });
+            });
         //Получение данных о погоде
         
     }

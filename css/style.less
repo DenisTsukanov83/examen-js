@@ -1,12 +1,17 @@
 // compress: false, sourceMap: true
 @import url(_today.less);
 @import url(_forecast.less);
+@import url(_not-found.less);
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    overflow-y: scroll;
 }
 
 .container {
@@ -22,7 +27,6 @@ img {
 
 .header {
     background-color: rgb(246, 246, 246);
-    margin-top: 56px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -94,7 +98,7 @@ img {
 
 .item {
     width: 100%;
-    background-color: white;
+    background-color: rgb(246, 246, 246);
     padding: 24px 25px 21px 25px;
 }
 

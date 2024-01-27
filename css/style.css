@@ -145,13 +145,30 @@
   font-size: 12pt;
 }
 .forecast-active {
-  background-color: #fff;
+  background-color: #f6f6f6;
+}
+.not-found {
+  display: none;
+}
+.not-found > div:first-child {
+  margin: auto;
+  width: 175px;
+}
+.not-found h2 {
+  text-align: center;
+  color: #918d8a;
+  font-size: 23pt;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  overflow-y: scroll;
 }
 .container {
   margin: auto;
@@ -164,7 +181,6 @@ img {
 }
 .header {
   background-color: #f6f6f6;
-  margin-top: 56px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -224,7 +240,7 @@ img {
 }
 .item {
   width: 100%;
-  background-color: white;
+  background-color: #f6f6f6;
   padding: 24px 25px 21px 25px;
 }
 .title {
